@@ -13,4 +13,9 @@ output "web_server_url" {
   value       = "http://${aws_instance.web_server.public_ip}"
 }
 
+#  ECR URL output
+output "ecr_repository_url" {
+  value = aws_ecr_repository.reelfiyat_repo.repository_url
+}
+
 # yarattıktan sonra gelen output dosyası

@@ -97,22 +97,62 @@ resource "aws_instance" "web_server" {   ### user_data, makine ayağa kalktığ�
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public[0].id # Place in the first subnet
   vpc_security_group_ids = [aws_security_group.web_sg.id]
-
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y httpd
-              systemctl start httpd
-              systemctl enable httpd
-              echo "<h1>Hello from Terraform!</h1>" > /var/www/html/index.html
-              EOF
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  key_name = var.key_name
 
   tags = {
     Name = "${var.project_name}-web-server"
   }
 }
 
-# reelfiyat için Docker imaj deposu
+# 8. Elastic IP Tanımlama
+resource "aws_eip" "web_eip" {
+  instance = aws_instance.web_server.id
+  domain   = "vpc"
+
+  tags = {
+    Name = "${var.project_name}-eip"
+  }
+}
+
+# A. IAM Rolü Oluşturma
+resource "aws_iam_role" "ec2_ecr_role" {
+  name = "${var.project_name}-ec2-ecr-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+# B. Role ECR Okuma Yetkisi Bağlama (AWS Managed Policy kullanıyoruz)
+resource "aws_iam_role_policy_attachment" "ecr_read_only" {
+  role       = aws_iam_role.ec2_ecr_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+# C. Instance Profile Oluşturma (Sunucuya bu rolü takmak için gerekli)
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "${var.project_name}-ec2-profile"
+  role = aws_iam_role.ec2_ecr_role.name
+}
+
+# Output'u Elastic IP ile güncelleyelim
+output "web_server_static_ip" {
+  description = "Fixed Public IP of the web server"
+  value       = aws_eip.web_eip.public_ip
+}
+
+# reelfiyat için Docker imaj 
 resource "aws_ecr_repository" "reelfiyat_repo" {
   name                 = "reelfiyat-app"
   image_tag_mutability = "MUTABLE" # İmaj etiketlerinin (örn: latest) güncellenebilmesi için
@@ -127,7 +167,3 @@ resource "aws_ecr_repository" "reelfiyat_repo" {
   }
 }
 
-# Çıktı olarak ECR URL'ini alalım
-output "ecr_repository_url" {
-  value = aws_ecr_repository.reelfiyat_repo.repository_url
-}
