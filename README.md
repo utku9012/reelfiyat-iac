@@ -1,44 +1,24 @@
-# Terraform in Action
+# Terraform / Ansible IAC Reelfiyat.com
 
-This repository contains Terraform configurations for demonstration and educational purposes, showcasing basic infrastructure provisioning on AWS.
+reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Security, Compute, Registry) yönetmek için kullanılan Terraform ve Ansible kodlarını içerir. Terraform ile resourceları oluşturup, ansible ile sunucu yapılandırmalarını yaptım. Projenin amacı; bu yazılımın geliştirilme anından, internete çıkışına kadar olan tüm sürecin, yazılan kodun veya güncellenen bölümlerinin konteynır haline getirilmesi, ECR'a pushlanması, CI/CD akışı doğrultusunda deploylanması ile güvenli ve ölçeklenebilir bir otomasyona bağlamaktır.
 
-## Requirements
+## 🛠 Kullanılan Teknolojiler
 
-To use these Terraform configurations, you will need:
+- **Cloud Provider:** AWS 
+- **IaC Tool:** Terraform
+- **Config Management:** Ansible
+- **Containerization:** Docker
+- **State Management:** S3 (Backend) & DynamoDB 
 
-- **Terraform CLI:** Ensure Terraform is installed on your system.
-- **AWS Account & Credentials:** Configure your AWS credentials. This can be done via environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`), the AWS CLI configuration (`~/.aws/credentials`), or an IAM role.
+## 📂 Proje Yapısı
 
-## Usage
-
-### 1. Initialize Terraform
-
-Initializes a working directory containing Terraform configuration files. This step downloads the necessary providers.
-
-```bash
-terraform init
-```
-
-### 2. Create an Execution Plan
-
-Generates an execution plan, showing what actions Terraform will take to achieve the desired state defined in your configuration.
-
-```bash
-terraform plan
-```
-
-### 3. Apply the Changes
-
-Applies the changes required to reach the desired state of the configuration, as described in the plan.
-
-```bash
-terraform apply
-```
-
-### 4. Destroy the Infrastructure
-
-Destroys the Terraform-managed infrastructure. **Use with caution!** This will deprovision all resources created by this configuration.
-
-```bash
-terraform destroy
-```
+```text
+reelfiyat-iac/
+├── terraform/          # Altyapı kaynak tanımları
+│   ├── main.tf         # VPC, EC2, ECR, IAM ve Security Groups
+│   ├── variables.tf    # Değişkenler
+│   ├── outputs.tf      # IP ve URL çıktıları
+│   └── providers.tf    # AWS ve S3 Backend yapılandırması
+└── ansible/            # Sunucu konfigürasyon dosyaları
+    ├── inventory.ini   # Sunucu erişim bilgileri (IP ve SSH Key yolu)
+    └── playbook.yml    # Sunucu içinde Docker kurulumu ve yetkilendirme adımları
