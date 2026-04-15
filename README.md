@@ -12,6 +12,7 @@ reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Securit
 
 ### Proje Akış Diyagramı
 
+```mermaid
 graph TD
     subgraph "1. Altyapı Deposu (reelfiyat-iac)"
         A[Terraform Kodları .tf] --> B[Ansible Playbook .yml]
