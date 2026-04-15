@@ -14,53 +14,36 @@ reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Securit
 
 ```mermaid
 graph TD
-    subgraph "1. Altyapı Deposu (reelfiyat-iac)"
+    subgraph Altyapı_Süreci [1. Altyapı Repo - reelfiyat-iac]
         A[Terraform Kodları .tf] --> B[Ansible Playbook .yml]
-    end
-
-    subgraph "GitHub Actions (IaC & Config)"
         B --> C{Terraform Apply}
-        C -->|Provision| D[AWS Infrastructure]
     end
 
-    subgraph "AWS Cloud (eu-central-1)"
-        D --> D1[VPC & Networking]
-        D --> D2[ECR Repository: reelfiyat-app]
-        D --> D3[EC2 Instance]
-        D --> D4[Elastic IP: 63.181.181.179]
-        D --> D5[IAM Role: ECR-Read-Only]
-        
-        D3 -.->|Attached| D5
-        D3 -.->|Static IP| D4
+    subgraph AWS_Cloud [2. AWS Cloud - eu-central-1]
+        C --> D1[VPC & Network]
+        C --> D2[ECR Repo]
+        C --> D3[EC2 Instance]
+        D3 --- D4[Elastic IP: 63.181.181.179]
+        D3 --- D5[IAM Role: ECR-Read-Only]
     end
 
-    subgraph "2. Uygulama Deposu (reelfiyat-app)"
-        E[Next.js App Code] --> F[Dockerfile]
+    subgraph Uygulama_Süreci [3. Uygulama Repo - reelfiyat-app]
+        E[Next.js Code] --> F[Dockerfile]
+        F --> G[GitHub Actions]
+        G --> H[Build & Push to ECR]
     end
 
-    subgraph "GitHub Actions (CI/CD Workflow)"
-        F --> G[Build & Tag Image]
-        G --> H[Login to ECR]
-        H --> I[Push Image to ECR]
-        I --> J[SSH to EC2]
+    subgraph Deploy_Aşaması [4. Deployment]
+        H --> I[SSH to EC2]
+        I --> J[Docker Pull & Run]
+        J --> K((LIVE WEBSITE))
     end
-
-    J -->|Run Commands| K[EC2 Server Execution]
-    
-    subgraph "EC2 Server (Docker Runtime)"
-        K --> K1[aws ecr login]
-        K1 --> K2[docker pull new image]
-        K2 --> K3[docker stop/rm old container]
-        K3 --> K4[docker run -p 80:3000]
-    end
-
-    K4 --> L((LIVE WEBSITE))
 
     %% Stil Tanımlamaları
-    style D fill:#f96,stroke:#333,stroke-width:2px
-    style L fill:#00ff00,stroke:#333,stroke-width:4px
-    style J fill:#3498db,stroke:#fff,stroke-width:2px
-
+    style K fill:#27ae60,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#f39c12,stroke:#fff,color:#fff
+    style G fill:#3498db,stroke:#fff,color:#fff
+    style D3 fill:#e67e22,stroke:#fff,color:#fff
 
 
 ## 📂 Proje Yapısı
