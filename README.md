@@ -14,11 +14,14 @@ reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Securit
 
 ```mermaid
 graph TD
-    subgraph Altyapı_Süreci [1. Altyapı Repo - reelfiyat-iac]
-        A[Terraform Kodları .tf] --> B[Ansible Playbook .yml]
+graph TD
+    %% 1. ALTYAPI SÜRECİ
+    subgraph Altyapi_Süreci [1. Altyapı - reelfiyat-iac]
+        A[Terraform .tf] --> B[Ansible .yml]
         B --> C{Terraform Apply}
     end
 
+    %% 2. AWS KAYNAKLARI
     subgraph AWS_Cloud [2. AWS Cloud - eu-central-1]
         C --> D1[VPC & Network]
         C --> D2[ECR Repo]
@@ -27,23 +30,25 @@ graph TD
         D3 --- D5[IAM Role: ECR-Read-Only]
     end
 
-    subgraph Uygulama_Süreci [3. Uygulama Repo - reelfiyat-app]
+    %% 3. UYGULAMA SÜRECİ
+    subgraph Uygulama_Süreci [3. Uygulama - reelfiyat-app]
         E[Next.js Code] --> F[Dockerfile]
         F --> G[GitHub Actions]
         G --> H[Build & Push to ECR]
     end
 
-    subgraph Deploy_Aşaması [4. Deployment]
+    %% 4. DEPLOYMENT
+    subgraph Deploy_Asamasi [4. Deployment]
         H --> I[SSH to EC2]
         I --> J[Docker Pull & Run]
         J --> K((LIVE WEBSITE))
     end
 
-    %% Stil Tanımlamaları
-    style K fill:#27ae60,stroke:#fff,stroke-width:2px,color:#fff
-    style C fill:#f39c12,stroke:#fff,color:#fff
-    style G fill:#3498db,stroke:#fff,color:#fff
-    style D3 fill:#e67e22,stroke:#fff,color:#fff
+    %% RENKLENDİRME
+    style C fill:#f39c12,color:#fff
+    style G fill:#3498db,color:#fff
+    style D3 fill:#e67e22,color:#fff
+    style K fill:#27ae60,color:#fff
 
 
 ## 📂 Proje Yapısı
