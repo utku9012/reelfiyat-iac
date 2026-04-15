@@ -15,7 +15,7 @@ reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Securit
 ```mermaid
 graph TD
     %% 1. ALTYAPI SÜRECİ
-    subgraph Altyapi_Süreci [1. Altyapı - reelfiyat-iac]
+    subgraph Altyapi_Surreci [1. Altyapı - reelfiyat-iac]
         A[Terraform .tf] --> B[Ansible .yml]
         B --> C{Terraform Apply}
     end
@@ -30,7 +30,7 @@ graph TD
     end
 
     %% 3. UYGULAMA SÜRECİ
-    subgraph Uygulama_Süreci [3. Uygulama - reelfiyat-app]
+    subgraph Uygulama_Sureci [3. Uygulama - reelfiyat-app]
         E[Next.js Code] --> F[Dockerfile]
         F --> G[GitHub Actions]
         G --> H[Build & Push to ECR]
@@ -42,13 +42,7 @@ graph TD
         I --> J[Docker Pull & Run]
         J --> K((LIVE WEBSITE))
     end
-
-    %% RENKLENDİRME
-    style C fill:#f39c12,color:#fff
-    style G fill:#3498db,color:#fff
-    style D3 fill:#e67e22,color:#fff
-    style K fill:#27ae60,color:#fff
-
+```
 
 ## 📂 Proje Yapısı
 
