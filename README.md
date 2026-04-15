@@ -14,7 +14,6 @@ reelfiyat.com uygulamamın AWS üzerindeki tüm altyapısını (Network, Securit
 
 ```mermaid
 graph TD
-graph TD
     %% 1. ALTYAPI SÜRECİ
     subgraph Altyapi_Süreci [1. Altyapı - reelfiyat-iac]
         A[Terraform .tf] --> B[Ansible .yml]
